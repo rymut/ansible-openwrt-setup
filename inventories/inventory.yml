@@ -1,0 +1,4 @@
+---
+openwrt:
+  hosts:
+    router.home.arpa:

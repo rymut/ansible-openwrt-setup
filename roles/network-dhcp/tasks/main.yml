@@ -1,6 +1,6 @@
 ---
 - name: Create DHCP static leases
-  include: host.yml item={{item}}
+  include: host.yml
   with_items: "{{ network_dhcp_hosts }}"
 - name: Commit changes
   uci:

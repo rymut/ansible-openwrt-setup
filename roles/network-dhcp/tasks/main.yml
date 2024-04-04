@@ -1,0 +1,8 @@
+---
+- name: Create DHCP static leases
+  include: host.yml item={{item}}
+  with_items: "{{ network_dhcp_hosts }}"
+- name: Commit changes
+  uci:
+    command: commit
+  notify: restart dhcp

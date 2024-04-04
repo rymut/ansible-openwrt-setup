@@ -1,4 +1,35 @@
 ---
 ansible_user: root
 ansible_host: 192.168.1.1
+ansible_password: 1CPD1vdlVjW+6
 transfer_method: scp
+ansible_python_interpreter: /usr/bin/python
+# configure network
+network_dhcp_hosts:
+  - { ip: "192.168.1.2", mac: "8A:87:39:AA:EE:8E" }
+  # synology
+  - { ip: "192.168.1.32", mac: "00:11:32:3D:36:AE" }
+  # pve eth0
+  - { ip: "192.168.1.128", mac: "1c:1b:0d:6a:12:d4" } # pve eth0
+  # pve eth1
+  - { ip: "192.168.1.129", mac: "1c:1b:0d:6a:12:d2"} # pve eth1
+  # pve wlan0
+  - { ip: "192.168.1.130", mac: "00:28:f8:22:c0:68" } # pve wlan0
+  # desktop wlan0
+  - { name: "WorkStation", ip: "192.168.1.192", mac: "0C:DD:24:F3:C0:19" }
+  # desktop eth0
+  - { ip: "192.168.1.193", mac: "B4:2E:99:A3:B9:9B" }
+      # ttpsc computer
+  - { ip: "192.168.1.196", mac: "84:14:4D:FD:6E:93" }
+  # samsung s10e - boguniu
+  - { ip: "192.168.1.200", mac: "FE:E0:97:11:58:E4"}
+  # samsung s10e - asia
+  - { ip: "192.168.1.201", mac: "D6:2C:A4:6E:F1:14"}
+  # wiz led controller
+  - { name: "wiz_3b5c16", ip: "192.168.1.204", mac: "A8:BB:50:3B:5C:16" }
+  # wiz remote
+  - { name: "ESP_B43F7A", ip: "192.168.1.205", mac: "94:F8:27:C7:71:23"}
+  # xiaomi camera
+  - { name: "xiaomi-camera", ip: "192.168.1.206", mac: "94:F8:27:C7:71:23" }
+  # hmt-1
+  - { name: "HMT-1", ip: "192.168.1.222", mac: "30:95:E3:13:14:1C" }

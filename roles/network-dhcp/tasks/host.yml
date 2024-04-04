@@ -1,0 +1,34 @@
+---
+- name: "Release static lease for ip: {{ item.ip }}"
+  uci:
+    command: absent
+    config: dhcp
+    type: host
+    find_by:
+      ip: "{{ item.ip }}"
+- name: "Release static lease for mac: {{ item.mac }}"
+  uci:
+    command: absent
+    config: dhcp
+    type: host
+    find_by:
+      mac: "{{ item.mac }}"
+- name: "Release static lease for name: {{ item.name | default('-') }}"
+  uci:
+    command: absent
+    config: dhcp
+    type: host
+    find_by:
+      name: "{{ item.name }}"
+  when: item.name | default('') != ''
+- name: "Reserve static lease for ip: {{ item.ip }}"
+  uci:
+    command: section
+    config: dhcp
+    type: host
+    find_by:
+      mac: 
+    value:
+      ip: "{{ item.ip }}"
+      mac: "{{ item.mac }}"
+      name: "{{ item.name | default('') }}"

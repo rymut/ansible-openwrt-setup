@@ -1,0 +1,6 @@
+---
+# list of dictionaries:
+# - { name: "<hostname>", mac: "<mac>", ip: "<ip>" }
+# name or mac must be set
+# ip can be set to "ignore" to block host
+network_dhcp_hosts:

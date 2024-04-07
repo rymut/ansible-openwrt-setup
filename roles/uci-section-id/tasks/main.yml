@@ -1,0 +1,17 @@
+---
+- uci:
+    command: find_all
+    config: "{{ config }}"
+    type: "{{ type }}"
+  register: all
+- set_fact:
+    result_id: ''
+    result_section: ''
+- name: block
+  include: filter.yml
+  loop: "{{ all.result }}" 
+  loop_control:
+    loop_var: filter_section
+- name: value is 
+  debug: 
+    msg: "id of item is `{{ result_id }}` - `{{ result_section }}`"

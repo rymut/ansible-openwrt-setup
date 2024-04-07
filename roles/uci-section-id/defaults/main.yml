@@ -1,0 +1,9 @@
+---
+# configuration base
+config:
+# configuration type
+type:
+# section to find
+section:
+# id to find
+id:

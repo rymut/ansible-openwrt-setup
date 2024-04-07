@@ -1,0 +1,51 @@
+---
+- block:
+  - name: "Get section '{{ config }}.{{ filter_section }}' configuration"
+    uci:
+      command: show
+      key: "{{ config }}.{{ filter_section }}"
+    register: section_data
+  - name: "Parse section configuration"
+    set_fact:
+      found: "{{ section_data.result | default('', true) | regex_search('^' ~ config ~ '\\.([^.]+)=' ~ type ~ '(\n|$)') }}"
+      current_ids: "{{ section_data.result | default('', true) | regex_findall('^' ~ config ~ '\\.([^.]+)=' ~ type ~ '.*', '\\1') }}"
+      current_id: ''
+      current_section: "{{ filter_section }}"
+      id_safe: "{{ id | default('', true) }}"
+      has_id: "{{ id | default('', true) != '' }}"
+      section_safe: "{{ section | default('', true) }}"
+      has_section: "{{ section | default('', true) != '' }}"
+  - set_fact:
+      current_id: "{{ current_ids[0] }}"
+    when: found
+  - name: 'Set result when id & section match'
+    set_fact:
+      result_section: "{{ current_section }}"
+      result_id: "{{ current_id }}"
+    when:
+      - found
+      - has_id
+      - id_safe == current_id
+      - has_section
+      - section_safe == current_section
+  - name: "Set result when id match"
+    set_fact:
+      result_section: "{{ current_section }}"
+      result_id: "{{ current_id }}"
+    when:
+      - found
+      - has_id
+      - id_safe == current_id
+      - not has_section
+  - name: "Set result when section match"
+    set_fact:
+      result_section: "{{ current_section }}"
+      result_id: "{{ current_id }}"
+    when:
+      - found
+      - not has_id
+      - has_section
+      - section_safe == current_section
+  when:
+    - result_id == ''
+    - result_section == ''

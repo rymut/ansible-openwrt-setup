@@ -1,34 +1,66 @@
 ---
-- name: "Release static lease for ip: {{ item.ip }}"
+- name: Set facts
+  block:
+  - name: set fact host_option_ip
+    set_fact:
+      host_option_ip: "{{ item.ip | default(omit) }}"
+      host_option_duid: "{{ item.duid | default(omit) }}"
+      host_option_name: "{{ item.name | default(omit) }}"
+      host_option_mac: "{{ item.mac | default(omit) }}"
+      host_id: "{{ item.id | default('@host[-1]') }}"
+      host_state: "{{ item.state | default('present') }}"
+      host_display_name: "{{ item.id | default(item.name) | default(item.mac) | default(item.duid) | default(host_id) }}"
+- name: "Host {{ host_display_name }} - find lease for ip: {{ host_option_ip }}"
   uci:
-    command: absent
+    command: find_all
     config: dhcp
     type: host
     find_by:
-      ip: "{{ item.ip }}"
-- name: "Release static lease for mac: {{ item.mac }}"
+      ip: "{{ host_option_ip }}"
+  register: sections_by_ip
+  when: host_option_ip is defined
+- name: "Host {{ host_display_name }} - find lease for duid"
   uci:
-    command: absent
+    command: find_all
     config: dhcp
     type: host
     find_by:
-      mac: "{{ item.mac }}"
-- name: "Release static lease for name: {{ item.name | default('-') }}"
+      duid: "{{ host_option_duid }}"
+  register: sections_by_duid
+  when: host_option_duid is defined
+- name: "Host {{ host_display_name }} - find lease for mac }}"
   uci:
-    command: absent
+    command: find_all
     config: dhcp
     type: host
     find_by:
-      name: "{{ item.name }}"
-  when: item.name | default('') != ''
-- name: "Reserve static lease for ip: {{ item.ip }}"
+      mac: "{{ host_option_mac }}"
+  when: host_option_mac is defined
+  register: sections_by_mac
+- name: "Host {{ host_display_name }} - find lease for name }}"
+  uci:
+    command: find_all
+    config: dhcp
+    type: host
+    find_by:
+      name: "{{ host_option_name }}"
+  when: host_option_name is defined
+  register: sections_by_name
+- name: "Host {{ host_display_name }} - deleting matching"
+  uci:
+    command: delete
+    key: "dhcp.{{ host_section }}"
+  loop: "{{ sections_by_ip.result | default([]) | union(sections_by_name.result | default([])) | union(sections_by_mac.result | default([])) | union(sections_by_duid.result | default([])) | difference([host_id]) }}"
+  loop_control:
+    loop_var: host_section
+- name: "Host {{ host_display_name }} - manipulate section"
   uci:
     command: section
     config: dhcp
     type: host
-    find_by:
-      mac: 
+    section: "{{ host_id }}"
+    state: host_state
     value:
-      ip: "{{ item.ip }}"
-      mac: "{{ item.mac }}"
-      name: "{{ item.name | default('') }}"
+      ip: "{{ host_option_ip | default(omit) }}"
+      mac: "{{ host_option_mac | default(omit) }}"
+      name: "{{ host_option_name | default(omit) }}"

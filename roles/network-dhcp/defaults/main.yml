@@ -1,6 +1,38 @@
 ---
+# options for dhcp
+network_dhcp_options:
+  state: absent
+  interface: ''
+  domain: 'lan'
+
+# list of dhcp pools
+network_dhcp_pools:
+  - id: name
+    interface: iface
+    start: 2
+    limit: 100
+    leasetime: 100h
+    dhcp_option:
+      - list
+
 # list of dictionaries:
 # - { name: "<hostname>", mac: "<mac>", ip: "<ip>" }
 # name or mac must be set
-# ip can be set to "ignore" to block host
+# <ip> - ip4 address can be set to "ignore" to block host
+# <mac> - mac address in format XX:XX:XX:XX:XX
+# <duid> - duid
+# <name> - hostname (optional)
+# <id> - id optional
 network_dhcp_hosts:
+  - ip: default(omit)
+    mac: default(omit)
+    hostid: default(omit)
+    duid: default(omit)
+    name: default(omit)
+    tag: default(omit)
+    leasetime: default(omit)
+
+# list of domains to set
+notwork_dhcp_domains:
+  - ip: defalut(omit)
+    name: local.{{ default_domain }}
